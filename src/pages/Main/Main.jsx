@@ -35,7 +35,7 @@ const Main = () => {
             type="text"
             id="hour"
             ref={hourElRef}
-            placeholder="hour number"
+            placeholder="Hour"
           />
         </div>
       </form>
