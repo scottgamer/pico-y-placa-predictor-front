@@ -1,28 +1,32 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useFormik } from "formik";
 import axios from "axios";
 
 import "./Main.css";
+
+import validationSchema from "../../schemas/picoPlacaValidationSchema";
 
 const Main = () => {
   const [predict, setPredict] = useState({
     plate: "",
     day: "",
-    hour: "",
-    hasPicoPlaca: false
+    time: ""
   });
+
+  const [message, setMessage] = useState("");
 
   const plateElRef = useRef(null);
   const dayElRef = useRef(null);
-  const hourElRef = useRef(null);
+  const timeElRef = useRef(null);
 
   const predictPicoPlacaHandler = async e => {
     try {
       e.preventDefault();
       const plate = plateElRef.current.value;
       const day = dayElRef.current.value;
-      const hour = hourElRef.current.value;
+      const time = timeElRef.current.value;
 
-      const data = { plate, day, hour };
+      const data = { plate, day, time };
 
       const response = await axios.post(
         `http://localhost:4000/api/pico-placa/predict`,
@@ -34,9 +38,8 @@ const Main = () => {
         }
       );
 
-      if (response.status !== 200 || response.status !== 201) {
-        throw new Error("Failed to load resource");
-      }
+      const message = response.data.message;
+      setMessage(message);
     } catch (error) {
       console.log(error);
     }
@@ -59,14 +62,14 @@ const Main = () => {
           <input type="text" id="day" ref={dayElRef} placeholder="Day" />
         </div>
         <div className="form-control">
-          <label htmlFor="hour">Hour</label>
-          <input type="text" id="hour" ref={hourElRef} placeholder="Hour" />
+          <label htmlFor="time">Time</label>
+          <input type="text" id="time" ref={timeElRef} placeholder="Time" />
         </div>
         <div className="form-control">
           <button onClick={e => predictPicoPlacaHandler(e)}>Predict</button>
         </div>
       </form>
-      {predict.hasPicoPlaca && <div>Tiene pico y placa</div>}
+      {message && <div>{message}</div>}
     </div>
   );
 };
