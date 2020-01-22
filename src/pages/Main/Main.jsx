@@ -13,6 +13,7 @@ import {
 
 import axios from "axios";
 
+import CONSTANTS from "../../config/constants";
 import validationSchema from "../../schemas/picoPlacaValidationSchema";
 
 const Main = () => {
@@ -32,7 +33,7 @@ const Main = () => {
       const values = { ...data, time };
 
       const response = await axios.post(
-        `http://localhost:4000/api/pico-placa/predict`,
+        `${CONSTANTS.API}/api/pico-placa/predict`,
         JSON.stringify(values),
         {
           headers: {
