@@ -4,9 +4,9 @@ const validationSchema = Yup.object({
   plate: Yup.string()
     .min(7)
     .max(7, "Must be 7 characters")
-    .required("Required"),
-  day: Yup.string().required("Required"),
-  time: Yup.string().required("Required")
+    .required(),
+  day: Yup.string().required(),
+  time: Yup.string().required()
 });
 
 export default validationSchema;
