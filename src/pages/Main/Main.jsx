@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useFormik } from "formik";
+import React, { useState } from "react";
+import { Formik, Form } from "formik";
+import { Button, TextField } from "@material-ui/core";
 import axios from "axios";
 
 import "./Main.css";
@@ -7,7 +8,7 @@ import "./Main.css";
 import validationSchema from "../../schemas/picoPlacaValidationSchema";
 
 const Main = () => {
-  const [predict, setPredict] = useState({
+  const [values, setValues] = useState({
     plate: "",
     day: "",
     time: ""
@@ -15,19 +16,8 @@ const Main = () => {
 
   const [message, setMessage] = useState("");
 
-  const plateElRef = useRef(null);
-  const dayElRef = useRef(null);
-  const timeElRef = useRef(null);
-
-  const predictPicoPlacaHandler = async e => {
+  const predictPicoPlacaHandler = async data => {
     try {
-      e.preventDefault();
-      const plate = plateElRef.current.value;
-      const day = dayElRef.current.value;
-      const time = timeElRef.current.value;
-
-      const data = { plate, day, time };
-
       const response = await axios.post(
         `http://localhost:4000/api/pico-placa/predict`,
         JSON.stringify(data),
@@ -47,28 +37,57 @@ const Main = () => {
 
   return (
     <div>
-      <form>
-        <div className="form-control">
-          <label htmlFor="plate">Plate number</label>
-          <input
-            type="text"
-            id="plate"
-            ref={plateElRef}
-            placeholder="Plate number"
-          />
-        </div>
-        <div className="form-control">
-          <label htmlFor="day">Day</label>
-          <input type="text" id="day" ref={dayElRef} placeholder="Day" />
-        </div>
-        <div className="form-control">
-          <label htmlFor="time">Time</label>
-          <input type="text" id="time" ref={timeElRef} placeholder="Time" />
-        </div>
-        <div className="form-control">
-          <button onClick={e => predictPicoPlacaHandler(e)}>Predict</button>
-        </div>
-      </form>
+      <Formik
+        initialValues={values}
+        // validate={values => {}}
+        onSubmit={(data, { setSubmitting }) => {
+          setSubmitting(true);
+          predictPicoPlacaHandler(data);
+          setSubmitting(false);
+        }}
+      >
+        {({ values, isSubmitting, handleChange, handleBlur, handleSubmit }) => (
+          <Form>
+            <TextField
+              label="Plate"
+              variant="outlined"
+              id="plate"
+              name="plate"
+              value={values.plate}
+              placeholder="PIB1234"
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+
+            <TextField
+              label="Day"
+              variant="outlined"
+              id="day"
+              name="day"
+              value={values.day}
+              placeholder="Monday"
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+            <TextField
+              label="Time"
+              variant="outlined"
+              id="time"
+              name="time"
+              value={values.time}
+              placeholder="0700"
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+
+            <div>
+              <Button disabled={isSubmitting} type="submit">
+                Can I drive?
+              </Button>
+            </div>
+          </Form>
+        )}
+      </Formik>
       {message && <div>{message}</div>}
     </div>
   );
