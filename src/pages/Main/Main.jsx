@@ -1,33 +1,40 @@
 import React, { useState } from "react";
 import { Formik, Form } from "formik";
-import { Button, TextField, FormGroup } from "@material-ui/core";
-
-import "date-fns";
-import DateFnsUtils from "@date-io/date-fns";
 import {
-  MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-  KeyboardDatePicker
-} from "@material-ui/pickers";
+  Button,
+  TextField,
+  FormControl,
+  FormHelperText,
+  FormGroup,
+  InputLabel,
+  Select,
+  MenuItem
+} from "@material-ui/core";
+
 import axios from "axios";
 
+import CONSTANTS from "../../config/constants";
 import validationSchema from "../../schemas/picoPlacaValidationSchema";
 
 const Main = () => {
   const [values, setValues] = useState({
     plate: "",
     day: "",
-    time: ""
+    time: "07:00"
   });
 
   const [message, setMessage] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
   const predictPicoPlacaHandler = async data => {
     try {
+      const time = data.time.replace(":", "");
+      const values = { ...data, time };
+
       const response = await axios.post(
-        `http://localhost:4000/api/pico-placa/predict`,
-        JSON.stringify(data),
+        `${CONSTANTS.API}/api/pico-placa/predict`,
+        JSON.stringify(values),
         {
           headers: {
             "Content-Type": "application/json"
@@ -42,9 +49,15 @@ const Main = () => {
     }
   };
 
-  // TODO: finish handling values form date and time picker
-  const handleDateChange = date => {
-    setSelectedDate(date);
+  const menuItemDays = () => {
+    const menuItemDaysComponent = days.map(day => {
+      return (
+        <MenuItem key={day} value={day}>
+          {day}
+        </MenuItem>
+      );
+    });
+    return menuItemDaysComponent;
   };
 
   return (
@@ -76,64 +89,41 @@ const Main = () => {
             </FormGroup>
             <br />
             <FormGroup>
-              <TextField
-                label="Day"
-                variant="outlined"
-                id="day"
-                name="day"
-                value={values.day}
-                placeholder="Monday"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                helperText={errors.day}
-                error={!!errors.day}
-              />
+              <FormControl error={!!errors.day}>
+                <InputLabel id="day" style={{ paddingLeft: "6%" }}>
+                  Day
+                </InputLabel>
+                <Select
+                  labelId="day"
+                  variant="outlined"
+                  id="day"
+                  name="day"
+                  value={values.day}
+                  placeholder="Day"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  {menuItemDays()}
+                </Select>
+                {errors.day && <FormHelperText>{errors.day}</FormHelperText>}
+              </FormControl>
             </FormGroup>
-
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <KeyboardDatePicker
-                disableToolbar
-                variant="inline"
-                format="dd/MM/yyyy"
-                margin="normal"
-                id="date-picker-inline"
-                label="Select date"
-                value={selectedDate}
-                onChange={handleDateChange}
-                helperText={errors.day}
-                error={!!errors.day}
-                KeyboardButtonProps={{
-                  "aria-label": "change date"
-                }}
-              />
-              <br />
-              <KeyboardTimePicker
-                variant="inline"
-                margin="normal"
-                id="time-picker"
-                label="Time picker"
-                value={selectedDate}
-                onChange={handleDateChange}
-                helperText={errors.day}
-                error={!!errors.day}
-                KeyboardButtonProps={{
-                  "aria-label": "change time"
-                }}
-              />
-            </MuiPickersUtilsProvider>
             <br />
             <FormGroup>
               <TextField
+                type="time"
                 label="Time"
                 variant="outlined"
                 id="time"
                 name="time"
                 value={values.time}
-                placeholder="0700"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 helperText={errors.time}
                 error={!!errors.time}
+                inputProps={{
+                  step: 300
+                }}
               />
             </FormGroup>
             <br />
@@ -147,7 +137,7 @@ const Main = () => {
                 Can I drive?
               </Button>
             </div>
-            <pre>{JSON.stringify(errors)}</pre>
+            {/* <pre>{JSON.stringify(errors)}</pre> */}
           </Form>
         )}
       </Formik>
