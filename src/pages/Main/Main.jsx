@@ -137,7 +137,7 @@ const Main = () => {
                 Can I drive?
               </Button>
             </div>
-            <pre>{JSON.stringify(errors)}</pre>
+            {/* <pre>{JSON.stringify(errors)}</pre> */}
           </Form>
         )}
       </Formik>
