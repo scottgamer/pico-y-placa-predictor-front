@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { Formik, Form } from "formik";
 import { Button, TextField, FormGroup } from "@material-ui/core";
+
+import "date-fns";
+import DateFnsUtils from "@date-io/date-fns";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardTimePicker,
+  KeyboardDatePicker
+} from "@material-ui/pickers";
 import axios from "axios";
 
 import validationSchema from "../../schemas/picoPlacaValidationSchema";
@@ -13,6 +21,7 @@ const Main = () => {
   });
 
   const [message, setMessage] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const predictPicoPlacaHandler = async data => {
     try {
@@ -31,6 +40,11 @@ const Main = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  // TODO: finish handling values form date and time picker
+  const handleDateChange = date => {
+    setSelectedDate(date);
   };
 
   return (
@@ -75,6 +89,38 @@ const Main = () => {
                 error={!!errors.day}
               />
             </FormGroup>
+
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <KeyboardDatePicker
+                disableToolbar
+                variant="inline"
+                format="dd/MM/yyyy"
+                margin="normal"
+                id="date-picker-inline"
+                label="Select date"
+                value={selectedDate}
+                onChange={handleDateChange}
+                helperText={errors.day}
+                error={!!errors.day}
+                KeyboardButtonProps={{
+                  "aria-label": "change date"
+                }}
+              />
+              <br />
+              <KeyboardTimePicker
+                variant="inline"
+                margin="normal"
+                id="time-picker"
+                label="Time picker"
+                value={selectedDate}
+                onChange={handleDateChange}
+                helperText={errors.day}
+                error={!!errors.day}
+                KeyboardButtonProps={{
+                  "aria-label": "change time"
+                }}
+              />
+            </MuiPickersUtilsProvider>
             <br />
             <FormGroup>
               <TextField
