@@ -19,7 +19,7 @@ const Main = () => {
   const [values, setValues] = useState({
     plate: "",
     day: "",
-    time: ""
+    time: "07:00"
   });
 
   const [message, setMessage] = useState("");
@@ -28,9 +28,12 @@ const Main = () => {
 
   const predictPicoPlacaHandler = async data => {
     try {
+      const time = data.time.replace(":", "");
+      const values = { ...data, time };
+
       const response = await axios.post(
         `http://localhost:4000/api/pico-placa/predict`,
-        JSON.stringify(data),
+        JSON.stringify(values),
         {
           headers: {
             "Content-Type": "application/json"
@@ -107,16 +110,19 @@ const Main = () => {
             <br />
             <FormGroup>
               <TextField
+                type="time"
                 label="Time"
                 variant="outlined"
                 id="time"
                 name="time"
                 value={values.time}
-                placeholder="0700"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 helperText={errors.time}
                 error={!!errors.time}
+                inputProps={{
+                  step: 300
+                }}
               />
             </FormGroup>
             <br />
