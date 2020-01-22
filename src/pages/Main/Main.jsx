@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Formik, Form } from "formik";
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField, FormGroup } from "@material-ui/core";
 import axios from "axios";
-
-import "./Main.css";
 
 import validationSchema from "../../schemas/picoPlacaValidationSchema";
 
@@ -39,52 +37,71 @@ const Main = () => {
     <div>
       <Formik
         initialValues={values}
-        // validate={values => {}}
+        validationSchema={validationSchema}
         onSubmit={(data, { setSubmitting }) => {
           setSubmitting(true);
           predictPicoPlacaHandler(data);
           setSubmitting(false);
         }}
       >
-        {({ values, isSubmitting, handleChange, handleBlur, handleSubmit }) => (
+        {({ values, errors, isSubmitting, handleChange, handleBlur }) => (
           <Form>
-            <TextField
-              label="Plate"
-              variant="outlined"
-              id="plate"
-              name="plate"
-              value={values.plate}
-              placeholder="PIB1234"
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-
-            <TextField
-              label="Day"
-              variant="outlined"
-              id="day"
-              name="day"
-              value={values.day}
-              placeholder="Monday"
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-            <TextField
-              label="Time"
-              variant="outlined"
-              id="time"
-              name="time"
-              value={values.time}
-              placeholder="0700"
-              onChange={handleChange}
-              onBlur={handleBlur}
-            />
-
+            <FormGroup>
+              <TextField
+                label="Plate"
+                variant="outlined"
+                id="plate"
+                name="plate"
+                value={values.plate}
+                placeholder="PIB1234"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                helperText={errors.plate}
+                error={!!errors.plate}
+              />
+            </FormGroup>
+            <br />
+            <FormGroup>
+              <TextField
+                label="Day"
+                variant="outlined"
+                id="day"
+                name="day"
+                value={values.day}
+                placeholder="Monday"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                helperText={errors.day}
+                error={!!errors.day}
+              />
+            </FormGroup>
+            <br />
+            <FormGroup>
+              <TextField
+                label="Time"
+                variant="outlined"
+                id="time"
+                name="time"
+                value={values.time}
+                placeholder="0700"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                helperText={errors.time}
+                error={!!errors.time}
+              />
+            </FormGroup>
+            <br />
             <div>
-              <Button disabled={isSubmitting} type="submit">
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={isSubmitting}
+                type="submit"
+              >
                 Can I drive?
               </Button>
             </div>
+            <pre>{JSON.stringify(errors)}</pre>
           </Form>
         )}
       </Formik>
