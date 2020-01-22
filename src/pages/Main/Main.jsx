@@ -108,12 +108,14 @@ const Main = () => {
               />
               <br />
               <KeyboardTimePicker
-              variant="inline"
+                variant="inline"
                 margin="normal"
                 id="time-picker"
                 label="Time picker"
                 value={selectedDate}
                 onChange={handleDateChange}
+                helperText={errors.day}
+                error={!!errors.day}
                 KeyboardButtonProps={{
                   "aria-label": "change time"
                 }}
