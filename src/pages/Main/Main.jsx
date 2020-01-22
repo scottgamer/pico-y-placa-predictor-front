@@ -90,7 +90,7 @@ const Main = () => {
             <br />
             <FormGroup>
               <FormControl error={!!errors.day}>
-                <InputLabel id="day" style={{ paddingLeft: "6%" }}>
+                <InputLabel id="day" style={{ paddingLeft: "3%" }}>
                   Day
                 </InputLabel>
                 <Select
@@ -141,7 +141,7 @@ const Main = () => {
           </Form>
         )}
       </Formik>
-      {message && <div>{message}</div>}
+      {message && <h3>{message}</h3>}
     </div>
   );
 };
